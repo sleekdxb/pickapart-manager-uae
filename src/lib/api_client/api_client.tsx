@@ -24,8 +24,11 @@ export class ApiClient {
     // Enable logging in development by default, can be overridden via options
     this.enableLogging = options?.enableLogging ?? Boolean((import.meta as any).env?.DEV);
 
-    // Request interceptor - log outgoing requests in dev
+    // Request interceptor - log outgoing requests in dev; allow FormData to set Content-Type
     this.instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+      if (config.data instanceof FormData) {
+        delete (config.headers as Record<string, unknown>)['Content-Type'];
+      }
       if (this.enableLogging) {
         try {
           const base = config.baseURL || this.instance.defaults.baseURL || '';

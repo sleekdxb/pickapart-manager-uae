@@ -1,10 +1,13 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from '../assets/images/logo.png';
 import dashboardIcon from '../assets/images/dashboard.png';
 import dealerImg from '../assets/images/dealer management.png';
 import garageImg from '../assets/images/Garage.png';
 import subscriptionImg from '../assets/images/subscription.png';
+import chartbar from '../assets/images/chartbar.png';
+import dropdownUp from '../assets/images/dropdownup.png';
+import dropdownDown from '../assets/images/dropdowndown.png';
 import { clearAuth, logoutStaff } from "../services/authService";
 
 
@@ -17,9 +20,15 @@ interface SidebarProps {
 
 const menuItems = [
   { name: "Dashboard(Overview)", path: "/dashboard", icon: dashboardIcon },
-  { name: "Dealer Management", path: "/dealer-management", icon:dealerImg},
-  { name: "Garage Management", path: "/garage-management", icon:garageImg},
-  { name: "Subscriptions & Billing", path: "/subscriptions", icon:subscriptionImg},
+  { name: "Dealer Management", path: "/dealer-management", icon: dealerImg },
+  { name: "Garage Management", path: "/garage-management", icon: garageImg },
+  { name: "Subscriptions & Billing", path: "/subscriptions", icon: subscriptionImg },
+];
+
+const brandCategorySubItems = [
+  { name: "Category", path: "/brand-category/category" },
+  { name: "Parts", path: "/brand-category/parts" },
+  { name: "Vehicle", path: "/brand-category/vehicle" },
 ];
 
 export default function Sidebar({ collapsed, isOpen, onClose }: SidebarProps) {
@@ -28,6 +37,12 @@ export default function Sidebar({ collapsed, isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const isBrandCategoryPath = location.pathname.startsWith("/brand-category");
+  const [brandCategoryExpanded, setBrandCategoryExpanded] = useState(isBrandCategoryPath);
+
+  useEffect(() => {
+    if (isBrandCategoryPath) setBrandCategoryExpanded(true);
+  }, [isBrandCategoryPath]);
 
   async function handleLogoutClick() {
     if (isLoggingOut) return;
@@ -91,12 +106,69 @@ export default function Sidebar({ collapsed, isOpen, onClose }: SidebarProps) {
                         : "text-gray-700 hover:bg-gray-100" 
                     }`}
                   >
-                    <img src={item.icon} alt={item.name} className="w-5 h-5" />
+                    <img
+                      src={item.icon}
+                      alt={item.name}
+                      className={`w-5 h-5 shrink-0 ${isActive ? "opacity-90 [filter:invert(48%)_sepia(79%)_saturate(2476%)_hue-rotate(130deg)_brightness(95%)_contrast(101%)]" : ""}`}
+                    />
                     {!collapsed && <span>{item.name}</span>}
                   </NavLink>
                 </li>
               );
             })}
+
+            {/* Brand & Category expandable */}
+            <li>
+              <button
+                type="button"
+                onClick={() => !collapsed && setBrandCategoryExpanded((prev) => !prev)}
+                className={`w-full flex items-center ${
+                  collapsed ? "justify-center" : "space-x-3"
+                } px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isBrandCategoryPath
+                    ? "border-l-4 border-[#028174] bg-[#E6F0F5] text-[#028174]"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <img
+                  src={chartbar}
+                  alt="Brand & Category"
+                  className={`w-5 h-5 shrink-0 ${isBrandCategoryPath ? "opacity-90 [filter:invert(48%)_sepia(79%)_saturate(2476%)_hue-rotate(130deg)_brightness(95%)_contrast(101%)]" : ""}`}
+                />
+                {!collapsed && (
+                  <>
+                    <span className="flex-1 text-left">Brand & Category</span>
+                    <img
+                      src={brandCategoryExpanded ? dropdownUp : dropdownDown}
+                      alt=""
+                      className="w-4 h-4"
+                    />
+                  </>
+                )}
+              </button>
+              {!collapsed && brandCategoryExpanded && (
+                <ul className="mt-1 ml-4 pl-4 border-l-2 border-gray-200 space-y-1">
+                  {brandCategorySubItems.map((sub) => {
+                    const isSubActive = location.pathname === sub.path;
+                    return (
+                      <li key={sub.path}>
+                        <NavLink
+                          to={sub.path}
+                          onClick={onClose}
+                          className={`block px-3 py-2 rounded-md text-sm transition-colors ${
+                            isSubActive
+                              ? "bg-[#E6F0F5] text-[#028174] font-medium"
+                              : "text-gray-600 hover:bg-gray-100"
+                          }`}
+                        >
+                          {sub.name}
+                        </NavLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </li>
           </ul>
         </nav>
 

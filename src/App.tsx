@@ -8,6 +8,8 @@ import GarageManagement from "./lib/pages/garage_managment/GarageManagement";
 import GarageProfile from "./lib/pages/garage_managment/GarageProfile";
 import AllGarages from "./lib/pages/garage_managment/AllGarages";
 import Subscriptions from "./lib/pages/subscriptions_dashboard/Subscriptions";
+import VehicleManagmentMain from "./lib/pages/BrandCategoryManagment/Vehicle/VehicleManagmentMain";
+import PartsManagment from "./lib/pages/BrandCategoryManagment/Parts/PartsManagment";
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
         <Route path="/dealer-management/AccountOwner" element={<AccountOwner />} />
         <Route path="/garage-management/GarageProfile" element={<GarageProfile />} />
         <Route path="/garage-management/AllGarages" element={<AllGarages />} />
+        <Route path="/brand-category/vehicle" element={<VehicleManagmentMain />} />
+        <Route path="/brand-category/parts" element={<PartsManagment />} />
         {/* Fallback */}
         <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
